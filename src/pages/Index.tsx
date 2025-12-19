@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Header from '@/components/Header';
+import ProductCard from '@/components/ProductCard';
+import ProductModal from '@/components/ProductModal';
 
 interface Product {
   id: number;
@@ -177,144 +177,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-border shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">O</span>
-              </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Onlу
-              </h1>
-            </div>
-
-            <div className="flex-1 max-w-2xl">
-              <div className="relative">
-                <Icon name="Search" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-                <Input
-                  placeholder="Поиск товаров, брендов, категорий..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 h-12 rounded-xl border-2 focus:border-primary"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative"
-                onClick={() => setActiveView('favorites')}
-              >
-                <Icon name="Heart" size={24} className={favorites.length > 0 ? 'fill-red-500 text-red-500' : ''} />
-                {favorites.length > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-secondary">
-                    {favorites.length}
-                  </Badge>
-                )}
-              </Button>
-
-              <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <Icon name="ShoppingCart" size={24} />
-                    {cartCount > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary">
-                        {cartCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="w-full sm:max-w-lg">
-                  <SheetHeader>
-                    <SheetTitle className="text-2xl">Корзина</SheetTitle>
-                  </SheetHeader>
-                  <div className="mt-6 space-y-4">
-                    {cart.length === 0 ? (
-                      <div className="text-center py-12">
-                        <Icon name="ShoppingCart" className="mx-auto text-muted-foreground mb-4" size={48} />
-                        <p className="text-muted-foreground">Корзина пуста</p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                          {cart.map((item) => (
-                            <Card key={item.id}>
-                              <CardContent className="p-4">
-                                <div className="flex gap-4">
-                                  <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-20 h-20 object-cover rounded-lg"
-                                  />
-                                  <div className="flex-1">
-                                    <h4 className="font-semibold text-sm">{item.name}</h4>
-                                    <p className="text-lg font-bold text-primary mt-1">
-                                      {item.price.toLocaleString('ru-RU')} ₽
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-2">
-                                      <Button
-                                        size="icon"
-                                        variant="outline"
-                                        className="h-8 w-8"
-                                        onClick={() => updateQuantity(item.id, -1)}
-                                      >
-                                        <Icon name="Minus" size={16} />
-                                      </Button>
-                                      <span className="w-8 text-center font-semibold">{item.quantity}</span>
-                                      <Button
-                                        size="icon"
-                                        variant="outline"
-                                        className="h-8 w-8"
-                                        onClick={() => updateQuantity(item.id, 1)}
-                                      >
-                                        <Icon name="Plus" size={16} />
-                                      </Button>
-                                      <Button
-                                        size="icon"
-                                        variant="ghost"
-                                        className="h-8 w-8 ml-auto text-destructive"
-                                        onClick={() => removeFromCart(item.id)}
-                                      >
-                                        <Icon name="Trash2" size={16} />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                        <div className="border-t pt-4">
-                          <div className="flex justify-between items-center mb-4">
-                            <span className="text-lg font-semibold">Итого:</span>
-                            <span className="text-2xl font-bold text-primary">
-                              {cartTotal.toLocaleString('ru-RU')} ₽
-                            </span>
-                          </div>
-                          <Button className="w-full h-12 text-lg" size="lg">
-                            Оформить заказ
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setActiveView('profile')}
-              >
-                <Icon name="User" size={24} />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        favorites={favorites}
+        setActiveView={setActiveView}
+        cart={cart}
+        cartCount={cartCount}
+        cartTotal={cartTotal}
+        isCartOpen={isCartOpen}
+        setIsCartOpen={setIsCartOpen}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {activeView === 'home' && (
@@ -374,68 +249,15 @@ const Index = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.slice(0, 8).map((product, idx) => (
-                  <Card
+                  <ProductCard
                     key={product.id}
-                    className="overflow-hidden hover-scale group cursor-pointer"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
-                  >
-                    <CardContent className="p-0">
-                      <div className="relative">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-48 object-cover"
-                          onClick={() => setSelectedProduct(product)}
-                        />
-                        <Badge className="absolute top-2 left-2 bg-secondary text-white">
-                          -{product.discount}%
-                        </Badge>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="absolute top-2 right-2 rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(product.id);
-                          }}
-                        >
-                          <Icon
-                            name="Heart"
-                            size={18}
-                            className={favorites.includes(product.id) ? 'fill-red-500 text-red-500' : ''}
-                          />
-                        </Button>
-                      </div>
-                      <div className="p-4">
-                        <h4
-                          className="font-semibold mb-2 line-clamp-2 cursor-pointer"
-                          onClick={() => setSelectedProduct(product)}
-                        >
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-1 mb-2">
-                          <Icon name="Star" className="fill-yellow-400 text-yellow-400" size={16} />
-                          <span className="text-sm font-medium">{product.rating}</span>
-                          <span className="text-xs text-muted-foreground">({product.reviews})</span>
-                        </div>
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-2xl font-bold text-primary">
-                            {product.price.toLocaleString('ru-RU')} ₽
-                          </span>
-                        </div>
-                        <div className="text-sm text-muted-foreground line-through mb-3">
-                          {product.oldPrice.toLocaleString('ru-RU')} ₽
-                        </div>
-                        <Button
-                          className="w-full"
-                          onClick={() => addToCart(product)}
-                        >
-                          <Icon name="ShoppingCart" className="mr-2" size={18} />
-                          В корзину
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    product={product}
+                    isFavorite={favorites.includes(product.id)}
+                    onToggleFavorite={toggleFavorite}
+                    onAddToCart={addToCart}
+                    onProductClick={setSelectedProduct}
+                    animationDelay={idx * 0.1}
+                  />
                 ))}
               </div>
             </section>
@@ -464,65 +286,15 @@ const Index = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredProducts.map((product, idx) => (
-                <Card
+                <ProductCard
                   key={product.id}
-                  className="overflow-hidden hover-scale group cursor-pointer animate-scale-in"
-                  style={{ animationDelay: `${idx * 0.05}s` }}
-                >
-                  <CardContent className="p-0">
-                    <div className="relative">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-48 object-cover"
-                        onClick={() => setSelectedProduct(product)}
-                      />
-                      <Badge className="absolute top-2 left-2 bg-secondary text-white">
-                        -{product.discount}%
-                      </Badge>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="absolute top-2 right-2 rounded-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(product.id);
-                        }}
-                      >
-                        <Icon
-                          name="Heart"
-                          size={18}
-                          className={favorites.includes(product.id) ? 'fill-red-500 text-red-500' : ''}
-                        />
-                      </Button>
-                    </div>
-                    <div className="p-4">
-                      <h4
-                        className="font-semibold mb-2 line-clamp-2 cursor-pointer"
-                        onClick={() => setSelectedProduct(product)}
-                      >
-                        {product.name}
-                      </h4>
-                      <div className="flex items-center gap-1 mb-2">
-                        <Icon name="Star" className="fill-yellow-400 text-yellow-400" size={16} />
-                        <span className="text-sm font-medium">{product.rating}</span>
-                        <span className="text-xs text-muted-foreground">({product.reviews})</span>
-                      </div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-2xl font-bold text-primary">
-                          {product.price.toLocaleString('ru-RU')} ₽
-                        </span>
-                      </div>
-                      <div className="text-sm text-muted-foreground line-through mb-3">
-                        {product.oldPrice.toLocaleString('ru-RU')} ₽
-                      </div>
-                      <Button className="w-full" onClick={() => addToCart(product)}>
-                        <Icon name="ShoppingCart" className="mr-2" size={18} />
-                        В корзину
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  product={product}
+                  isFavorite={favorites.includes(product.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onAddToCart={addToCart}
+                  onProductClick={setSelectedProduct}
+                  animationDelay={idx * 0.05}
+                />
               ))}
             </div>
           </div>
@@ -548,57 +320,14 @@ const Index = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {favoriteProducts.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover-scale group cursor-pointer">
-                    <CardContent className="p-0">
-                      <div className="relative">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-48 object-cover"
-                          onClick={() => setSelectedProduct(product)}
-                        />
-                        <Badge className="absolute top-2 left-2 bg-secondary text-white">
-                          -{product.discount}%
-                        </Badge>
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="absolute top-2 right-2 rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(product.id);
-                          }}
-                        >
-                          <Icon name="Heart" size={18} className="fill-red-500 text-red-500" />
-                        </Button>
-                      </div>
-                      <div className="p-4">
-                        <h4
-                          className="font-semibold mb-2 line-clamp-2 cursor-pointer"
-                          onClick={() => setSelectedProduct(product)}
-                        >
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-1 mb-2">
-                          <Icon name="Star" className="fill-yellow-400 text-yellow-400" size={16} />
-                          <span className="text-sm font-medium">{product.rating}</span>
-                          <span className="text-xs text-muted-foreground">({product.reviews})</span>
-                        </div>
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-2xl font-bold text-primary">
-                            {product.price.toLocaleString('ru-RU')} ₽
-                          </span>
-                        </div>
-                        <div className="text-sm text-muted-foreground line-through mb-3">
-                          {product.oldPrice.toLocaleString('ru-RU')} ₽
-                        </div>
-                        <Button className="w-full" onClick={() => addToCart(product)}>
-                          <Icon name="ShoppingCart" className="mr-2" size={18} />
-                          В корзину
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    isFavorite={true}
+                    onToggleFavorite={toggleFavorite}
+                    onAddToCart={addToCart}
+                    onProductClick={setSelectedProduct}
+                  />
                 ))}
               </div>
             )}
@@ -673,81 +402,14 @@ const Index = () => {
         )}
       </main>
 
-      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          {selectedProduct && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl">{selectedProduct.name}</DialogTitle>
-              </DialogHeader>
-              <div className="grid md:grid-cols-2 gap-6 mt-4">
-                <div>
-                  <img
-                    src={selectedProduct.image}
-                    alt={selectedProduct.name}
-                    className="w-full rounded-lg"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Icon name="Star" className="fill-yellow-400 text-yellow-400" size={20} />
-                    <span className="text-lg font-semibold">{selectedProduct.rating}</span>
-                    <span className="text-muted-foreground">({selectedProduct.reviews} отзывов)</span>
-                  </div>
-                  <div className="mb-4">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-bold text-primary">
-                        {selectedProduct.price.toLocaleString('ru-RU')} ₽
-                      </span>
-                      <Badge className="bg-secondary text-white">-{selectedProduct.discount}%</Badge>
-                    </div>
-                    <p className="text-lg text-muted-foreground line-through">
-                      {selectedProduct.oldPrice.toLocaleString('ru-RU')} ₽
-                    </p>
-                  </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <p className="text-green-700 font-semibold flex items-center gap-2">
-                      <Icon name="TrendingDown" size={20} />
-                      Цена ниже рынка на {selectedProduct.discount}%!
-                    </p>
-                  </div>
-                  <div className="space-y-3 mb-6">
-                    <Button className="w-full h-12 text-lg" onClick={() => addToCart(selectedProduct)}>
-                      <Icon name="ShoppingCart" className="mr-2" />
-                      Добавить в корзину
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full h-12"
-                      onClick={() => toggleFavorite(selectedProduct.id)}
-                    >
-                      <Icon
-                        name="Heart"
-                        className={favorites.includes(selectedProduct.id) ? 'fill-red-500 text-red-500 mr-2' : 'mr-2'}
-                      />
-                      {favorites.includes(selectedProduct.id) ? 'В избранном' : 'В избранное'}
-                    </Button>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Icon name="Truck" size={16} className="text-primary" />
-                      <span>Бесплатная доставка от 2000 ₽</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon name="Package" size={16} className="text-primary" />
-                      <span>Доставка 1-2 дня</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon name="Shield" size={16} className="text-primary" />
-                      <span>Гарантия 12 месяцев</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <ProductModal
+        product={selectedProduct}
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        isFavorite={selectedProduct ? favorites.includes(selectedProduct.id) : false}
+        onToggleFavorite={toggleFavorite}
+        onAddToCart={addToCart}
+      />
 
       <footer className="bg-muted mt-16 py-8 border-t">
         <div className="container mx-auto px-4">
